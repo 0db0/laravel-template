@@ -3,7 +3,7 @@ Docker: Nginx 1.21, Php 8.0 + Xdebug 3.0.2, MySQL 8.0
 
 Installation:
 
-1. Replace DB_VARIABLES from .env.develop to .env
+1. Replace DB_VARIABLES from .env.local to .env
 
 2. Build develop stack via docker:
     - Building project:
