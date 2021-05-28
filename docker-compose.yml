@@ -1,0 +1,53 @@
+version: "3.7"
+
+services:
+  webserver:
+    container_name: app.nginx
+    build:
+      context: docker/nginx
+      dockerfile: Dockerfile
+    ports:
+      - 8080:80
+    depends_on:
+      - fpm
+      - db
+    volumes:
+      - .:/var/www/app
+    networks:
+      - app
+
+  fpm:
+    container_name: app.php-fpm
+    build:
+      context: docker/php
+      dockerfile: fpm/Dockerfile
+      args:
+        - uid=${uid}
+    tty: true
+    volumes:
+      - .:/var/www/app
+    networks:
+      - app
+
+  db:
+    container_name: app.database
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: "${DB_PASSWORD}"
+      MYSQL_USER: "${DB_USERNAME}"
+      MYSQL_PASSWORD: "${DB_PASSWORD}"
+      MYSQL_DATABASE: "${DB_DATABASE}"
+    volumes:
+      - mysql_volume:/var/lib/mysql
+    ports:
+      - "${DB_PORT}:3306"
+    networks:
+      - app
+
+networks:
+  app:
+    driver: bridge
+
+volumes:
+  mysql_volume:
+    driver: local
