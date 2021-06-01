@@ -18,3 +18,4 @@ Route::get('/', function () {
 });
 
 Route::get('/books', [BookController::class, 'index']);
+Route::get('/books/order', [BookController::class, 'order']);
