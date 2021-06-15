@@ -11,6 +11,7 @@ services:
     depends_on:
       - fpm
       - db
+      - node
     volumes:
       - .:/var/www/app
     networks:
@@ -41,6 +42,15 @@ services:
       - mysql_volume:/var/lib/mysql
     ports:
       - "${DB_PORT}:3306"
+    networks:
+      - app
+
+  node:
+    container_name: app.nodejs
+    image: node:16-alpine3.11
+    working_dir: /var/www/app
+    volumes:
+      - .:/var/www/app
     networks:
       - app
 
