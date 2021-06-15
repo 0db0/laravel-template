@@ -2,7 +2,9 @@
 
 namespace Database\Seeders;
 
+use App\Models\Author;
 use App\Models\Book;
+use Database\Factories\AuthorFactory;
 use Illuminate\Database\Seeder;
 
 class BookSeeder extends Seeder
@@ -14,8 +16,14 @@ class BookSeeder extends Seeder
      */
     public function run()
     {
+        $authors = Author::all();
+
         Book::factory()
-            ->count(25)
-            ->create();
+            ->count(2000)
+            ->create()
+            ->each(function (Book $book) use ($authors) {
+                $book->authors()
+                    ->saveMany($authors->random(rand(1, 3)));
+            });
     }
 }
