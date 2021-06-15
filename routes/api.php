@@ -2,8 +2,8 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\BookController;
-use App\Http\Controllers\TokenController;
+use App\Http\Controllers\Api\BookController;
+use App\Http\Controllers\Api\TokenController;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,8 +20,8 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/books', [BookController::class, 'index']);
+Route::middleware('auth:api')->group(function () {
+    Route::get('/books', [BookController::class, 'index'])->middleware('scopes:list-books');
     Route::get('/books/order', [BookController::class, 'order']);
 });
 
