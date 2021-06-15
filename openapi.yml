@@ -1,0 +1,56 @@
+openapi: 3.0.0
+info:
+  title: 'Laravel template project'
+  description: 'Main goal of this project is deep study of Laravel components'
+  contact:
+    email: dmitrii.budko@example.com
+  version: 1.0.0
+servers:
+  -
+    url: 'http://localhost:8080'
+    description: 'Local host'
+paths:
+  /api/books:
+    get:
+      tags:
+        - book
+      summary: 'List all books'
+      operationId: index
+      responses:
+        '200':
+          description: 'successful operation'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookCollection'
+components:
+  schemas:
+    BookCollection:
+      properties:
+        books:
+          description: 'book list'
+          type: array
+          items:
+            $ref: '#/components/schemas/Book'
+      type: object
+      xml:
+        name: BookCollection
+    Book:
+      properties:
+        title:
+          description: 'Book title'
+          type: string
+        price:
+          description: 'Book price'
+          type: number
+          format: float
+      type: object
+      xml:
+        name: Book
+tags:
+  -
+    name: book
+    description: 'Everything about books'
+  -
+    name: user
+    description: 'Operations about users'

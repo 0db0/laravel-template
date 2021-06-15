@@ -1,48 +1,56 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
-use App\Http\Resources\BookResource;
-use App\Jobs\SendEmail;
+use App\Http\Controllers\Controller;
+use App\Http\Resources\BookCollection;
 use App\Models\Book;
 use App\Models\User;
 use App\Notifications\BookOrdered;
 use App\Service\BookService;
 use Illuminate\Contracts\Bus\Dispatcher as JobDispatcher;
 use Illuminate\Contracts\Notifications\Dispatcher as NotifyDispatcher;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 
 class BookController extends Controller
 {
-    private BookService      $bookService;
-    private JobDispatcher    $jobDispatcher;
-    private NotifyDispatcher $notifyDispatcher;
-
     public function __construct(
-        BookService $bookService,
-        JobDispatcher $jobDispatcher,
-        NotifyDispatcher $notifyDispatcher
-    ) {
-        $this->bookService      = $bookService;
-        $this->jobDispatcher    = $jobDispatcher;
-        $this->notifyDispatcher = $notifyDispatcher;
-    }
+        private BookService $bookService,
+        private JobDispatcher $jobDispatcher,
+        private NotifyDispatcher $notifyDispatcher
+    ) { }
 
-    public function index(): Response
+    /**
+     * @OA\Get(
+     *     path="/api/books",
+     *     summary="List all books",
+     *     tags={"book"},
+     *     operationId="index",
+     *     @OA\Response(
+     *         response=200,
+     *         description="successful operation",
+     *         @OA\JsonContent(ref="#/components/schemas/BookCollection")
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="successful operation",
+     *         @OA\JsonContent(ref="#/components/schemas/BookCollection")
+     *     ),
+     * )
+     */
+    public function index(): BookCollection
     {
         $books = $this->bookService->getAllBooks();
 
-        return new Response($books->toArray());
+        return new BookCollection($books);
     }
 
     public function order(): Response
     {
-        $this->jobDispatcher->dispatch(new SendEmail(User::find(1), Book::find(2)));
+//        $this->jobDispatcher->dispatch(new SendEmail(User::find(1), Book::find(2)));
         $this->notifyDispatcher->send(User::find(1), new BookOrdered());
+        BookOrdered::dispath();
 
         return new Response('Book was ordered');
     }
